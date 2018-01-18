@@ -1,5 +1,7 @@
 package com.br.api.cliente.cliente;
 
+import static org.junit.Assert.assertEquals;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -11,14 +13,14 @@ import com.br.api.cliente.service.ClienteServico;
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(ClienteRestController.class)
-public class ClienteApplicationTests {
+public class ClienteApplicationWebTests {
 
 	@MockBean
 	private ClienteServico clienteServico; 
 	
 	@Test
 	public void contextLoads() {
-		System.out.println(clienteServico.findById(1L));
+		assertEquals(clienteServico.findById(1L),null);
 	}
 
 }
