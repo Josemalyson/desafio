@@ -18,4 +18,6 @@ public interface ClienteServico extends Serializable {
 	public Cliente delete(Cliente cliente);
 
 	public List<Cliente> findAll(Pageable pageable);
+
+	public String findByNome(String nome);
 }

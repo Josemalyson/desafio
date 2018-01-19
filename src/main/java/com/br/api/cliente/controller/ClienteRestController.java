@@ -17,17 +17,16 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.br.api.cliente.constante.MsgContante;
+import com.br.api.cliente.execption.NegocioExecption;
 import com.br.api.cliente.model.Cliente;
 import com.br.api.cliente.service.ClienteServico;
 
 @RestController
 @CrossOrigin
-@RequestMapping("/cliente")
+@RequestMapping("/clientes")
 public class ClienteRestController implements Serializable {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -1091191071262878519L;
 
 	@Autowired
@@ -41,33 +40,48 @@ public class ClienteRestController implements Serializable {
 
 	@GetMapping("{id}")
 	public ResponseEntity<Cliente> getId(@PathVariable("id") Long id) {
+
+		if (id == null) {
+			throw new NegocioExecption(MsgContante.PARAMETRO_NULO);
+		}
+
 		return new ResponseEntity<>(this.clienteServico.findById(id), HttpStatus.OK);
 	}
 
 	@GetMapping("{id}/nome")
-	public String getNome(@PathVariable("id") String id) {
-		return id;
+	public ResponseEntity<String> getNome(@PathVariable("id") Long id) {
+		isNomeValido(id);
+		return new ResponseEntity<>(this.clienteServico.findById(id).getNome(), HttpStatus.OK);
 	}
 
 	@PostMapping
 	public ResponseEntity<Cliente> salveClient(@RequestBody Cliente cliente) {
+		isClienteValido(cliente);
 		return new ResponseEntity<>(this.clienteServico.save(cliente), HttpStatus.OK);
 	}
 
 	@PutMapping()
 	public ResponseEntity<Cliente> editClient(@RequestBody Cliente cliente) {
+		isClienteValido(cliente);
 		return new ResponseEntity<>(this.clienteServico.edit(cliente), HttpStatus.OK);
 	}
 
 	@DeleteMapping("{id}")
 	public ResponseEntity<Cliente> excluirCliente(@PathVariable("id") Long id) {
-
 		Cliente cliente = this.clienteServico.findById(id);
-
-		if (cliente == null) {
-			return new ResponseEntity<>(new Cliente(), HttpStatus.BAD_REQUEST);
-		}
-
+		isClienteValido(cliente);
 		return new ResponseEntity<>(this.clienteServico.delete(cliente), HttpStatus.OK);
+	}
+
+	private void isClienteValido(Cliente cliente) {
+		if (cliente == null) {
+			throw new NegocioExecption(MsgContante.PARAMETRO_NULO);
+		}
+	}
+
+	private void isNomeValido(Long id) {
+		if (id == null) {
+			throw new NegocioExecption(MsgContante.NOME_NULO);
+		}
 	}
 }

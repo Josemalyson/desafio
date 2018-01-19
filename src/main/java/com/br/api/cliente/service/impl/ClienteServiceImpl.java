@@ -47,4 +47,9 @@ public class ClienteServiceImpl implements ClienteServico {
 		return this.clienteRepository.findAll(pageable).getContent();
 	}
 
+	@Override
+	public String findByNome(String nome) {
+		return this.clienteRepository.findByNome(nome);
+	}
+
 }
