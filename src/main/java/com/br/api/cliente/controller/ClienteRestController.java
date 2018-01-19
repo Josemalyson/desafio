@@ -22,9 +22,21 @@ import com.br.api.cliente.execption.NegocioExecption;
 import com.br.api.cliente.model.Cliente;
 import com.br.api.cliente.service.ClienteServico;
 
-@RestController
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
+
 @CrossOrigin
+@RestController
 @RequestMapping("/clientes")
+@Api(value = "/clientes", description = "Serviço de crud do cliente")
+@ApiResponses(value = { @ApiResponse(code = 200, message = "Dados retornados com sucesso"),
+		@ApiResponse(code = 400, message = "Você subemeteu dados com problema"),
+		@ApiResponse(code = 401, message = "Você Não pode acessar esse recurso"),
+		@ApiResponse(code = 403, message = "Acesso Negado"),
+		@ApiResponse(code = 404, message = "Reurso não encontrado"),
+		@ApiResponse(code = 500, message = "Erro interno do servidor"), })
 public class ClienteRestController implements Serializable {
 
 	private static final long serialVersionUID = -1091191071262878519L;
@@ -32,13 +44,14 @@ public class ClienteRestController implements Serializable {
 	@Autowired
 	private ClienteServico clienteServico;
 
-	// http://localhost:8080/api/cliente/?page=0&size=5
 	@GetMapping
+	@ApiOperation(value = "Retorno da lista de clientes paginadas", notes = "Utilze o seguinte exemplo como parametro http://localhost:8080/api/clientes/?page=0&size=5")
 	public ResponseEntity<List<Cliente>> findAll(Pageable pageable) {
 		return new ResponseEntity<>(this.clienteServico.findAll(pageable), HttpStatus.OK);
 	}
 
 	@GetMapping("{id}")
+	@ApiOperation(value = "Retorna o cliente por ID")
 	public ResponseEntity<Cliente> getId(@PathVariable("id") Long id) {
 
 		if (id == null) {
@@ -49,24 +62,28 @@ public class ClienteRestController implements Serializable {
 	}
 
 	@GetMapping("{id}/nome")
+	@ApiOperation(value = "Retorna o nome do cliente passado pelo id")
 	public ResponseEntity<String> getNome(@PathVariable("id") Long id) {
 		isNomeValido(id);
 		return new ResponseEntity<>(this.clienteServico.findById(id).getNome(), HttpStatus.OK);
 	}
 
 	@PostMapping
+	@ApiOperation(value = "Salva o cliente")
 	public ResponseEntity<Cliente> salveClient(@RequestBody Cliente cliente) {
 		isClienteValido(cliente);
 		return new ResponseEntity<>(this.clienteServico.save(cliente), HttpStatus.OK);
 	}
 
 	@PutMapping()
+	@ApiOperation(value = "Edita o cliente")
 	public ResponseEntity<Cliente> editClient(@RequestBody Cliente cliente) {
 		isClienteValido(cliente);
 		return new ResponseEntity<>(this.clienteServico.edit(cliente), HttpStatus.OK);
 	}
 
 	@DeleteMapping("{id}")
+	@ApiOperation(value = "Deleta o cliente pelo ID")
 	public ResponseEntity<Cliente> excluirCliente(@PathVariable("id") Long id) {
 		Cliente cliente = this.clienteServico.findById(id);
 		isClienteValido(cliente);
